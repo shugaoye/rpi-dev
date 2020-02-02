@@ -45,7 +45,6 @@ RUN curl -Ls https://github.com/schachr/docker-raspbian-stretch/raw/master/raspb
     > $SYSROOT/$QEMU_PATH \
  && chmod +x $SYSROOT/$QEMU_PATH \
  && mkdir -p $SYSROOT/build \
- && mount --bind /dev $SYSROOT/dev \
  && echo mknod -m 666 $SYSROOT/dev/null    c 1 3 \
  && echo mknod -m 666 $SYSROOT/dev/random  c 1 8 \
  && echo mknod -m 666 $SYSROOT/dev/urandom c 1 9 \
