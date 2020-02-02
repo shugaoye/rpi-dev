@@ -41,14 +41,7 @@ RUN curl -L https://github.com/raspberrypi/tools/tarball/master \
 RUN curl -Ls https://github.com/schachr/docker-raspbian-stretch/raw/master/raspbian.image.tar.xz \
     | tar -xJf - 
 
-RUN mkdir -p $SYSROOT/build \
- && mount --bind /dev $SYSROOT/dev \
- && echo mknod -m 666 $SYSROOT/dev/null    c 1 3 \
- && echo mknod -m 666 $SYSROOT/dev/random  c 1 8 \
- && echo mknod -m 666 $SYSROOT/dev/urandom c 1 9 \
- && echo "deb http://archive.raspbian.org/raspbian stretch firmware" \
-    >> $SYSROOT/etc/apt/sources.list
- 
+
 COPY image/ /
 
 WORKDIR /build
