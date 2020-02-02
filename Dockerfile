@@ -39,10 +39,12 @@ RUN curl -L https://github.com/raspberrypi/tools/tarball/master \
   | tar --wildcards --strip-components 3 -xzf - "*/arm-bcm2708/$TOOLCHAIN/"
 
 RUN curl -Ls https://github.com/schachr/docker-raspbian-stretch/raw/master/raspbian.image.tar.xz \
-    | tar -xJf - \
- && curl -Ls https://github.com/resin-io-projects/armv7hf-debian-qemu/raw/master/bin/qemu-arm-static \
-    > $SYSROOT/$QEMU_PATH \
- && chmod +x $SYSROOT/$QEMU_PATH \
+    | tar -xJf - 
+
+RUN curl -Ls https://github.com/resin-io-projects/armv7hf-debian-qemu/raw/master/bin/qemu-arm-static \
+    > $SYSROOT$QEMU_PATH
+
+RUN chmod +x $SYSROOT$QEMU_PATH \
  && mkdir -p $SYSROOT/build \
  && mount --bind /dev $SYSROOT/dev \
  && echo mknod -m 666 $SYSROOT/dev/null    c 1 3 \
