@@ -38,8 +38,28 @@ WORKDIR $RPXC_ROOT
 RUN curl -L https://github.com/raspberrypi/tools/tarball/master \
   | tar --wildcards --strip-components 3 -xzf - "*/arm-bcm2708/$TOOLCHAIN/"
 
+WORKDIR $SYSROOT
 RUN curl -Ls https://github.com/schachr/docker-raspbian-stretch/raw/master/raspbian.image.tar.xz \
-    | tar -xJf - 
+    | tar -xJf - \
+ && curl -Ls https://github.com/resin-io-projects/armv7hf-debian-qemu/raw/master/bin/qemu-arm-static \
+    > $SYSROOT/$QEMU_PATH \
+ && chmod +x $SYSROOT/$QEMU_PATH \
+ && mkdir -p $SYSROOT/build \
+ && mount --bind /dev $SYSROOT/dev \
+ && echo mknod -m 666 $SYSROOT/dev/null    c 1 3 \
+ && echo mknod -m 666 $SYSROOT/dev/random  c 1 8 \
+ && echo mknod -m 666 $SYSROOT/dev/urandom c 1 9 \
+ && echo "deb http://archive.raspbian.org/raspbian stretch firmware" \
+    >> $SYSROOT/etc/apt/sources.list \
+ && chroot $SYSROOT $QEMU_PATH /bin/sh -c '\
+        apt-get update \
+        && DEBIAN_FRONTEND=noninteractive apt-get install -y apt-utils \
+        && DEBIAN_FRONTEND=noninteractive dpkg-reconfigure apt-utils \
+        && DEBIAN_FRONTEND=noninteractive apt-get upgrade -y \
+        && DEBIAN_FRONTEND=noninteractive apt-get install -y \
+                libc6-dev \
+                symlinks \
+        && symlinks -cors /'
 
 
 COPY image/ /
